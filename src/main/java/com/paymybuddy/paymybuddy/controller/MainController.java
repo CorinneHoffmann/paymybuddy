@@ -68,7 +68,7 @@ public class MainController {
 	}
 	
 	
-	@GetMapping(value = "/personneAjouterAmi")
+	@PostMapping(path = "/personneAjouterAmi")
 	public  ResponseEntity<String> AjouterUnAmisASaListe(@RequestParam(value = "email", required = false) String email,
 									 @RequestParam(value = "emailami", required = false) String emailami) throws NoResultException {
 		if (email.isEmpty()) {
