@@ -35,15 +35,15 @@ This code uses the default root account to connect and the password can be set a
 
 4.Spring io with dependency
 
-![Options SPRING intializr](/image/option spring initializr.png)
+![Options SPRING intializr](/image/optionSpringInitializr.png)
 
 5. MODEL UML
 
-![UML Class](/image/diagramme class paymybuddy.PNG)
+![UML Class](/image/diagrammeClassPaymybuddy.png)
 
 6. BASE DE DONNEES MPD
 
-![MPD DENORMALISE](/image/MPDdenormalise.PNG)
+![MPD DENORMALISE](/image/MPDdenormalise.png)
 
 ### Running App
 
