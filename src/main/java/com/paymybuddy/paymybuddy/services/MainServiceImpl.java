@@ -8,16 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.paymybuddy.paymybuddy.Dao.CommissionDaoImpl;
+import com.paymybuddy.paymybuddy.Dao.CompteBancaireDaoImpl;
 import com.paymybuddy.paymybuddy.Dao.CompteDaoImpl;
 import com.paymybuddy.paymybuddy.Dao.OperationCompteDaoImpl;
 import com.paymybuddy.paymybuddy.Dao.PersonneDaoImpl;
 import com.paymybuddy.paymybuddy.constants.SensComptable;
+import com.paymybuddy.paymybuddy.constants.TauxCommission;
 import com.paymybuddy.paymybuddy.constants.TypeOperation;
 import com.paymybuddy.paymybuddy.exception.ServiceAddAmiException;
+import com.paymybuddy.paymybuddy.exception.ServiceAmiException;
+import com.paymybuddy.paymybuddy.exception.ServiceCompteBancaireException;
 import com.paymybuddy.paymybuddy.exception.ServiceConnectionException;
 import com.paymybuddy.paymybuddy.exception.ServiceEmailException;
 import com.paymybuddy.paymybuddy.exception.SoldeNegatifException;
 import com.paymybuddy.paymybuddy.model.Compte;
+import com.paymybuddy.paymybuddy.model.CompteBancaire;
 import com.paymybuddy.paymybuddy.model.OperationCompte;
 import com.paymybuddy.paymybuddy.model.Personne;
 import com.paymybuddy.paymybuddy.model.PersonneInfo;
@@ -41,6 +47,12 @@ public class MainServiceImpl implements MainService {
 	@Autowired
 	private CompteDaoImpl compteDaoImpl;
 	
+	@Autowired
+	private CommissionDaoImpl commissionDaoImpl;
+	
+	@Autowired
+	private CompteBancaireDaoImpl compteBancaireDaoImpl;
+	
 	//@Autowired
 	//private OperationCompteRepository operationCompteRepository;
 	
@@ -54,9 +66,11 @@ public class MainServiceImpl implements MainService {
 	private Compte compte;
 	private OperationCompte operationCompte;
 	private Personne ami;
-	private String emailami;
-
+	private String emailAmi;
 	private Double montant;
+	private Compte compteAmi;
+	private CompteBancaire compteBancaire;
+
 
 	private SensComptable sensComptable;
 
@@ -69,7 +83,7 @@ public class MainServiceImpl implements MainService {
 	 *    creer la personne en base 
 	 *    créer un compte associé en base
 	 */
-	public void enregistrerPersonne(PersonneInfo personneInfo) throws NoResultException{
+	public void enregistrerPersonne(PersonneInfo personneInfo) {
 		this.personneInfo = personneInfo;
 		email = personneInfo.getEmail();
 	
@@ -91,7 +105,7 @@ public class MainServiceImpl implements MainService {
 	 * @param motDePasse - motDePasse de la personne qui se connecte
 	 */
 	@Override
-	public Personne seConnecter(String email, String motDePasse) throws NoResultException{
+	public Personne seConnecter(String email, String motDePasse){
 		this.email = email;
 		this.motDePasse = motDePasse;
 		
@@ -112,14 +126,14 @@ public class MainServiceImpl implements MainService {
 	 */
 
 	@Override
-	public void AjouterUnAmisASaListe(String email, String emailami) {
+	public void AjouterUnAmisASaListe(String email, String emailAmi) {
 		this.email = email;
-		this.emailami = emailami;
+		this.emailAmi = emailAmi;
 		boolean findAmiInListe = false;
 			
-		ami = personneDaoImpl.findByEmail(emailami);	
+		ami = personneDaoImpl.findByEmail(emailAmi);	
 		if (ami == null) {
-			logger.error("RESPONSE_EMAIL_NOT_EXISTS " + emailami);
+			logger.error("RESPONSE_EMAIL_NOT_EXISTS " + emailAmi);
 			throw new ServiceEmailException("Email inexistant en base");
 		}else {			
 			personne = personneDaoImpl.findByEmail(email);
@@ -155,6 +169,8 @@ public class MainServiceImpl implements MainService {
 		
 		this.email = email;
 		this.montant = montant;
+		personne = new Personne();
+		compte = new Compte();
 		
 		personne = personneDaoImpl.findByEmail(email);
 		compte = compteDaoImpl.findCompteByPersonneId(personne.getIdPersonne());
@@ -166,17 +182,157 @@ public class MainServiceImpl implements MainService {
 		
 		if (soldeCompte >= 0.00)
 		{	
-		operationCompteDaoImpl.enregistrerOperationComptable(compte, credit, versement, montant, null, null);
+		operationCompteDaoImpl.creerOperationCompte(compte, credit, versement, montant, null, null);
 		compte.setSolde(soldeCompte);		
 		compteRepository.save(compte);	
 		logger.info("REPONSE_COMPTE_CREDITER DE " + soldeCompte);
 		}
 		else {
+			logger.error("RESPONSE_SOLDE_NEGATIF_VERSEMENT_IMPOSSIBLE ");
 			throw new SoldeNegatifException("Solde négatif, operation interdite");
 		}
 
 	}
-
+	
+	/**
+	 * @param email - email de la personne qui se connecte
+	 * @param emailAmi - email de la personne que l'on veut payer
+	 * @param montant - montant a payer
+	 * vérifier existence emailAmi dans la base
+	 * vérifier que ami est bien dans la liste d'ami
+	 * récupérer le compte a débiter
+	 * calculer le taux de commission
+	 * calculer le solde du compte a debiter si le paiement est effectué (montant + commission)
+	 * si solde positif
+	 * 		creer une operation compte débit sur le compte a débiter
+	 * 		mettre à jour le solde du compte a debiter
+	 * 		creer une operation compte crédit sur le compte a créditer
+	 * 		mettre à jour le solde du compte a créditer
+	 */
+	@Transactional
+	@Override
+	public void payerUnAmi(String email, String emailAmi, Double montant) {
+		this.email = email;
+		this.emailAmi = emailAmi;
+		this.montant = montant;
+		
+		boolean findAmiInListe = false;
+		
+		ami = new Personne();
+		personne = new Personne();
+		
+		ami = personneDaoImpl.findByEmail(emailAmi);	
+		if (ami == null) {
+			logger.error("RESPONSE_EMAIL_AMI_INEXISTANT " + emailAmi);
+			throw new ServiceEmailException("Email inexistant en base");
+		}else {			
+			personne = personneDaoImpl.findByEmail(email);
+			int index;			
+			for(index=0;index<personne.getAmis().size();index++){
+				if (personne.getAmis().get(index).getIdPersonne() == ami.getIdPersonne()) {
+					findAmiInListe = true;
+				}
+			}
+		}
+		if (findAmiInListe == false) {
+			logger.error("RESPONSE_AMI_ABSENT_LISTE_AMI " + emailAmi);
+			throw new ServiceAmiException("Cette personne n'est pas dans votre liste d'ami");			
+		} else {
+			compte = new Compte();
+			compte = compteDaoImpl.findCompteByPersonneId(personne.getIdPersonne());
+			System.out.println("compte a debiter " + compte.getIdCompte() + "solde " + compte.getSolde());
+			
+			Double montantCommission = calculerMontantCommission(montant);
+			System.out.println("montant de la commission " + montantCommission);
+			
+			Double montantTotalDebit = montantCommission + montant;
+			System.out.println("montant total du débit " + montantTotalDebit);
+			
+			SensComptable debit = SensComptable.D;
+			TypeOperation paiement = TypeOperation.PAIEMENT;
+		
+			Double soldeCompte = calculerSoldeCompte(compte,montantTotalDebit,debit);
+			System.out.println("compte a debiter " + compte.getIdCompte() + "nouveau solde si paiement " + soldeCompte);
+		
+			if (soldeCompte >= 0.00)
+				{	
+					operationCompte = new OperationCompte();
+					operationCompte = operationCompteDaoImpl.creerOperationCompte(compte, debit, paiement, montant, ami, null);
+					System.out.println("operation compte créée sur compte " + compte.getIdCompte());
+					commissionDaoImpl.creerCommission(operationCompte, montantCommission,TauxCommission.TAUX1);
+					System.out.println("commission créée " + operationCompte.getIdOperationCompte());
+					compte.setSolde(soldeCompte);		
+					compteRepository.save(compte);	
+					System.out.println("compte debité mis à jour " + compte.getIdCompte());
+		
+					compteAmi = new Compte();
+					compteAmi = compteDaoImpl.findCompteByPersonneId(ami.getIdPersonne());
+					System.out.println("compte a crediter " + compteAmi.getIdCompte() + "solde " + compteAmi.getSolde());
+					SensComptable credit = SensComptable.C;		
+					soldeCompte = calculerSoldeCompte(compteAmi,montant,credit);
+					System.out.println("compte a crediter " + compteAmi.getIdCompte() + "nouveau solde si paiement " + soldeCompte);
+					operationCompteDaoImpl.creerOperationCompte(compteAmi, credit, paiement, montant, personne, null);
+					System.out.println("operation compte créée sur compte " + compteAmi.getIdCompte());
+					compteAmi.setSolde(soldeCompte);		
+					compteRepository.save(compteAmi);	
+					System.out.println("compte credite mis à jour " + compteAmi.getIdCompte());
+					logger.info("REPONSE_COMPTE " + email + "DEBITER DE " +montant);
+					logger.info("REPONSE_COMPTE " + emailAmi + "CREDITER DE " +montant);
+				} else {
+					logger.error("RESPONSE_SOLDE_NEGATIF_PAIEMENT_IMPOSSIBLE ");
+					throw new SoldeNegatifException("Solde négatif, operation interdite");
+				}
+		}
+	}
+	
+	/**
+	 * @param email - email de la personne qui se connecte
+	 * @param montant - montant a virer sur le compte bancaire
+	 * récupérer IdPersonne par email
+	 * vérifier existence du compte bancaire dans la base
+	 * récupérer le compte a débiter
+	 * calculer le solde du compte a debiter si le virement est effectué
+	 * si solde positif
+	 * 		creer une operation Virement compte débit sur le compte a débiter
+	 * 		mettre à jour le solde du compte a debiter
+	 */
+	@Override
+	public void virerSurCompteBancaire(String email, Double montant) {
+		
+		this.email = email;
+		this.montant = montant;
+		
+		personne = new Personne();
+		compte = new Compte();
+		personne = personneDaoImpl.findByEmail(email);
+		compteBancaire = new CompteBancaire();
+		compteBancaire = compteBancaireDaoImpl.findCompteBancaireByPersonneId(personne.getIdPersonne());	
+		if (compteBancaire == null) {
+			logger.error("REPONSE_COMPTE_BANCAIRE_INEXISTANT_EN_BASE_POUR " + email);
+			throw new ServiceCompteBancaireException("Compte bancaire inexistant en base");
+		}else {		
+			
+			compte = compteDaoImpl.findCompteByPersonneId(personne.getIdPersonne());			
+			SensComptable debit = SensComptable.D;
+			TypeOperation virement = TypeOperation.VIREMENT;
+			
+			Double soldeCompte = calculerSoldeCompte(compte,montant,debit);
+			
+			if (soldeCompte >= 0.00)
+			{	
+			operationCompteDaoImpl.creerOperationCompte(compte, debit, virement, montant, null, compteBancaire);
+			compte.setSolde(soldeCompte);		
+			compteRepository.save(compte);	
+			logger.info("REPONSE_COMPTE_DEBITER_DE " + soldeCompte + " POUR VIREMENT BANCAIRE");
+			}
+			else {
+				logger.error("RESPONSE_SOLDE_NEGATIF_PAIEMENT_IMPOSSIBLE ");
+				throw new SoldeNegatifException("Solde négatif, operation interdite");
+			}
+		}		
+	}
+		
+	
 	@Override
 	public Double calculerSoldeCompte(Compte compte, Double montant, SensComptable sensComptable) {
 		this.compte = compte;
@@ -194,10 +350,17 @@ public class MainServiceImpl implements MainService {
 		return solde;
 	}
 
-	/*@Override
-	public void virerMontantVersCompteBancaire(String email, Double montant) {
-		
-		
-	}*/
+	@Override
+	public Double calculerMontantCommission(Double montant) {
+		this.montant = montant;
+		Double montantCommission = 0.00;
+		Double tauxCommission = TauxCommission.TAUX1;
+		montantCommission = montant*tauxCommission/100;
+		System.out.println("montant commission calculé " +montantCommission);
+		return montantCommission;
+	}
+
+	
+
 }
 	

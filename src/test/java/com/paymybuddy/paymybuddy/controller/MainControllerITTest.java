@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,8 +27,7 @@ import com.paymybuddy.paymybuddy.services.MainService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-class MainControllerIT {
+class MainControllerITTest {
 
 	@Autowired
 	private MockMvc mockmvc;
@@ -40,6 +41,7 @@ class MainControllerIT {
 	@Autowired
 	PersonneRepository personneRepository;
 	
+	@Transactional
 	@Test
 	void shouldRecordPersonney() throws Exception {
 
@@ -52,7 +54,7 @@ class MainControllerIT {
 		String contentAsString = result.getResponse().getContentAsString();
 		assertEquals("Enregistrement OK", contentAsString);
 	}
-	
+
 	
 	@Test
 	void shouldConnect() throws Exception {
@@ -68,6 +70,7 @@ class MainControllerIT {
 		assertEquals("Connexion OK", contentAsString);
 	}
 	
+	@Transactional
 	@Test
 	void shouldAjouterAmi() throws Exception {
 
@@ -82,6 +85,7 @@ class MainControllerIT {
 		assertEquals("Ajout ami OK", contentAsString);
 	}
 	
+	@Transactional
 	@Test
 	void shouldCrediterrCompte() throws Exception {
 
@@ -96,5 +100,61 @@ class MainControllerIT {
 		assertEquals("versement OK", contentAsString);
 	}
 	
+	@Transactional
+	@Test
+	void shouldPayerUnAmi() throws Exception {
+
+		
+		MvcResult result = mockmvc.perform(post("/payerAmi")
+				.param("email", "testcorinne93.@gmail.com")
+				.param("emailami", "testtitidavant.@gmail.com")
+				.param("montant", "500.00")
+				.characterEncoding("utf-8"))
+				.andExpect(status().isOk()).andDo(print()).andReturn();
+		
+		String contentAsString = result.getResponse().getContentAsString();
+		assertEquals("paiement OK", contentAsString);
+	}
 	
+	@Transactional
+	@Test
+	void shouldPayerUnAmiKo() throws Exception {
+
+		
+		MvcResult result = mockmvc.perform(post("/payerAmi")
+				.param("email", "testcorinne93.@gmail.com")
+				.param("emailami", "testtitidavant.@gmail.com")
+				.param("montant", "1520.00")
+				.characterEncoding("utf-8"))
+				.andExpect(status().isUnauthorized()).andDo(print()).andReturn();
+		
+	}
+	
+	@Transactional
+	@Test
+	void shouldFaireUnVirementCompteBancaire() throws Exception {
+
+		
+		MvcResult result = mockmvc.perform(post("/virementCompteBancaire")
+				.param("email", "testcorinne93.@gmail.com")
+				.param("montant", "1000.00")
+				.characterEncoding("utf-8"))
+				.andExpect(status().isOk()).andDo(print()).andReturn();
+		
+		String contentAsString = result.getResponse().getContentAsString();
+		assertEquals("virement OK", contentAsString);		
+	}
+	
+	@Transactional
+	@Test
+	void shouldFaireUnVirementCompteBancaireKo() throws Exception {
+
+		
+		MvcResult result = mockmvc.perform(post("/virementCompteBancaire")
+				.param("email", "testchristineleglo.@yahoo.fr")
+				.param("montant", "100.00")
+				.characterEncoding("utf-8"))
+				.andExpect(status().isNotFound()).andDo(print()).andReturn();
+		
+	}
 }

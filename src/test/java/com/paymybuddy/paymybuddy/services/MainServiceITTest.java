@@ -1,14 +1,15 @@
 package com.paymybuddy.paymybuddy.services;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -24,8 +25,7 @@ import com.paymybuddy.paymybuddy.repository.PersonneRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-class MainServiceIT {
+class MainServiceITTest {
 
 	
 	@Autowired
@@ -45,7 +45,7 @@ class MainServiceIT {
 	@Autowired
 	MainServiceImpl mainServiceImpl;
 
-	
+	@Transactional
 	@Test
 	void enregistrerPersonneTest() {
 		PersonneInfo personneInfo = new PersonneInfo();
@@ -70,6 +70,7 @@ class MainServiceIT {
 		assertEquals("testdupont", personne.getNom());
 	}
 	
+	@Transactional
 	@Test
 	void AjouterAmiTest() {
 		String email = "testcorinne93.@gmail.com";
@@ -79,13 +80,38 @@ class MainServiceIT {
 		assertEquals(2, personne.getAmis().size());
 	}
 	
+	
+	@Transactional
 	@Test
 	void verserMontantSurCompteTest() {
 		String email = "testcorinne93.@gmail.com";
 		Double montant = 200.10;
 		mainServiceImpl.verserMontantSurCompte(email, montant);
 		Compte compte = compteDaoImpl.findCompteByPersonneId(2);
-		assertEquals(1731.35, compte.getSolde());
+		assertTrue(compte.getSolde() == 1731.35);
+	}
+	
+	@Transactional
+	@Test
+	void payerUnAmiTest() {
+		String email = "testcorinne93.@gmail.com";
+		String emailAmi = "testtitidavant.@gmail.com";
+		Double montant = 12.00;
+		mainServiceImpl.payerUnAmi(email, emailAmi, montant);
+		Compte compte = compteDaoImpl.findCompteByPersonneId(2);
+		System.out.println("montant compte " + compte.getSolde());
+		assertTrue(compte.getSolde() == 1519.01);
+	}
+	
+	@Transactional
+	@Test
+	void faireUnVirementTest() {
+		String email = "testcorinne93.@gmail.com";
+		Double montant = 100.00;
+		mainServiceImpl.virerSurCompteBancaire(email, montant);
+		Compte compte = compteDaoImpl.findCompteByPersonneId(2);
+		System.out.println("montant compte " + compte.getSolde());
+		assertTrue(compte.getSolde() == 1431.25);
 	}
 	
 	

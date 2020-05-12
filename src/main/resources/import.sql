@@ -32,14 +32,12 @@ insert into personne_amis(personne_idpersonne,amis_idpersonne)values(4,3);
 insert into comptebancaire(idcomptebancaire,bic,iban,domiciliation,personneid)values(1,'FRLABGHY','FR12 ATRE FGT1 12KL POIU 12','SOCIETE GENERALE',1);
 insert into comptebancaire(idcomptebancaire,bic,iban,domiciliation,personneid)values(2,'FRLABGJY','FR02 1860 17D1 12KL FGHJ 17','LA BANQUE POSTALE',2);
 
--- chargement operationbancaire
+-- chargement operationcompte
 insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typeoperation,debitcredit,personneid,comptebancaireid)values(1,2,100.20,'2020-01-10','PAIEMENT','D',3,NULL);
-insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typeoperation,debitcredit,personneid,comptebancaireid)values(2,1,300,'2020-02-15','VIREMENT','D',NULL,1);
-insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typeoperation,debitcredit,personneid,comptebancaireid)values(3,3,500,'2020-02-15','VERSEMENT','C',NULL,NULL);
+insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typeoperation,debitcredit,personneid,comptebancaireid)values(2,3,100.20,'2020-01-10','PAIEMENT','C',2,NULL);
+insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typeoperation,debitcredit,personneid,comptebancaireid)values(3,1,300,'2020-02-15','VIREMENT','D',NULL,1);
+insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typeoperation,debitcredit,personneid,comptebancaireid)values(4,3,500,'2020-02-15','VERSEMENT','C',NULL,NULL);
 
 -- chargement commission
-insert into commission(idcommission,taux,montant,operationbancaireid)values(1,2,2.01,1);
-insert into commission(idcommission,taux,montant,operationbancaireid)values(2,2,6.00,2);
-insert into commission(idcommission,taux,montant,operationbancaireid)values(3,2,10.00,3);
-
+insert into commission(idcommission,taux,montant,operationcompteid)values(1,2.00,2.01,1);
 

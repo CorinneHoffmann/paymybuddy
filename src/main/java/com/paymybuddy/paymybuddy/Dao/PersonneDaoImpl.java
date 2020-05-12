@@ -75,7 +75,6 @@ public class PersonneDaoImpl implements PersonneDao {
 		personne.setNom(personneInfo.getNom());
 		personne.setDescription(personneInfo.getDescription());
 		personne = personneRepository.save(personne);
-		System.out.println("personne Id crée " + personne.getIdPersonne());
 		return personne;
 		
 	}

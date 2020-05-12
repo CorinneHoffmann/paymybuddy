@@ -22,7 +22,7 @@ public class Commission {
 	
 	@NotNull
 	@Column(name = "taux")
-	private Integer taux;
+	private Double taux;
 	
 	@NotNull
 	@Column(name = "montant")
@@ -30,6 +30,39 @@ public class Commission {
 	
 	@NotNull
 	@OneToOne
-	@JoinColumn(name = "operationbancaireid")
-	private OperationCompte operationBancaire;
+	@JoinColumn(name = "operationcompteid")
+	private OperationCompte operationCompte;
+
+	public Long getIdCommission() {
+		return idCommission;
+	}
+
+	public void setIdCommission(Long idCommission) {
+		this.idCommission = idCommission;
+	}
+
+	public Double getTaux() {
+		return taux;
+	}
+
+	public void setTaux(Double taux) {
+		this.taux = taux;
+	}
+
+	public Double getMontant() {
+		return montant;
+	}
+
+	public void setMontant(Double montant) {
+		this.montant = montant;
+	}
+
+	public OperationCompte getOperationCompte() {
+		return operationCompte;
+	}
+
+	public void setOperationCompte(OperationCompte operationCompte) {
+		this.operationCompte = operationCompte;
+	}
+	
 }

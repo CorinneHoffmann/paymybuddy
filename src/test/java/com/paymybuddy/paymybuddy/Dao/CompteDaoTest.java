@@ -1,18 +1,19 @@
 package com.paymybuddy.paymybuddy.Dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
+import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -23,7 +24,7 @@ import com.paymybuddy.paymybuddy.repository.CompteRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class CompteDaoTest {
 
 	
@@ -40,24 +41,21 @@ class CompteDaoTest {
 		Long personneId = (long) 2;			
 		compte = compteDaoImpl.findCompteByPersonneId(personneId);
 		System.out.println("compte " + compte.getSolde());
-		assertEquals(1531.25, compte.getSolde());		
+		assertTrue(compte.getSolde()==1531.25);		
 	}
 	
 	@Test
 	void whenFindCompteByPersonneIdWhichNotExists() throws NoResultException, NotSupportedException, SystemException  {
 		Long personneId = (long) 6;			
-		assertEquals(null, compteDaoImpl.findCompteByPersonneId(personneId));
+		assertTrue(compteDaoImpl.findCompteByPersonneId(personneId) == null);
 	}
-	
+
+@Transactional
 @Test
 	
 	void whentryInsertComptewithExistForeignKeys() {
 		try {
 			Personne personne = new Personne();
-			personne.setEmail("mail.creationcompte@gmail.com");
-			personne.setMotDePasse("motDePasse");
-			personne.setNom("creationCompte");
-			personne.setDescription("creationCompteDescription");
 			Long id = (long) 5;
 			personne.setIdPersonne(id); 
 			Compte compte = new Compte();
@@ -67,7 +65,7 @@ class CompteDaoTest {
 		} catch (Exception e) {
 		} finally {
 			List<Compte> comptes = compteRepository.findAll();
-			assertEquals(5, comptes.size());
+			assertTrue(comptes.size() == 5);
 		}
 	}
 	

@@ -22,7 +22,34 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 	@ResponseBody
 	@ResponseStatus(HttpStatus.FOUND)
 	public ApiResponse handleFoundException(ServiceEmailException e) {
-		logger.error("email found");
+		logger.error("EMAIL_DEJA_EXISTANT");
+		ApiResponse apiresponse = new ApiResponse(HttpStatus.FOUND, e.getMessage());
+		return apiresponse;
+	}
+	
+	@ExceptionHandler(ServiceCompteBancaireException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ApiResponse handleNotFoundException(ServiceCompteBancaireException e) {
+		logger.error("COMPTE_BANCAIRE_INEXISTANT");
+		ApiResponse apiresponse = new ApiResponse(HttpStatus.NOT_FOUND, e.getMessage());
+		return apiresponse;
+	}
+	
+	@ExceptionHandler(ServiceAmiException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ApiResponse handleNotFoundException(ServiceAmiException e) {
+		logger.error("PERSONNE_NON_REFERENCEE_COMME_AMI");
+		ApiResponse apiresponse = new ApiResponse(HttpStatus.NOT_FOUND, e.getMessage());
+		return apiresponse;
+	}
+	
+	@ExceptionHandler(ServiceAddAmiException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.FOUND)
+	public ApiResponse handleFoundException(ServiceAddAmiException e) {
+		logger.error("PERSONNE_DEJA_REFERENCEE_COMME_AMI");
 		ApiResponse apiresponse = new ApiResponse(HttpStatus.FOUND, e.getMessage());
 		return apiresponse;
 	}
@@ -31,7 +58,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 	@ResponseBody
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ApiResponse handleControllerException(ControllerException ex) {
-		logger.error("Information vide");
+		logger.error("INFORMATION_VIDE");
 		ApiResponse apiresponse = new ApiResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
 		return apiresponse;
 	}
@@ -40,18 +67,18 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 	@ExceptionHandler(ServiceConnectionException.class)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ApiResponse handleFoundException(ServiceConnectionException e) {
-		logger.error("identifiants not found");
+	public ApiResponse handleNotFoundException(ServiceConnectionException e) {
+		logger.error("IDENTIFICATION_IMPOSSIBLE");
 		ApiResponse apiresponse = new ApiResponse(HttpStatus.NOT_FOUND, e.getMessage());
 		return apiresponse;
 	}
 	
 	@ExceptionHandler(SoldeNegatifException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ApiResponse handleFoundException(SoldeNegatifException e) {
-		logger.error("identifiants not found");
-		ApiResponse apiresponse = new ApiResponse(HttpStatus.NOT_FOUND, e.getMessage());
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ApiResponse handleUnauthorizedException(SoldeNegatifException e) {
+		logger.error("SOLDE_NEGATIF");
+		ApiResponse apiresponse = new ApiResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
 		return apiresponse;
 	}
 

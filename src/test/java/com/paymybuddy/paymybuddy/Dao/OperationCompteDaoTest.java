@@ -5,9 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -21,28 +26,24 @@ import com.paymybuddy.paymybuddy.repository.OperationCompteRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
+//@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class OperationCompteDaoTest {
 
 	@Autowired
 	OperationCompteRepository operationCompteRepository;
-	
+
+@Transactional
 @Test
 	
 	void whentryInsertOperationCompteVersement() {
 		try {
 			Personne personne = new Personne();
-			personne.setEmail("corinne93.@gmail.com");
-			personne.setMotDePasse("coco93");
-			personne.setNom("alicantour");
-			personne.setDescription("restauration amigos");
 			Long idPersonne = (long) 2;
 			personne.setIdPersonne(idPersonne); 
 			
 			Compte compte = new Compte();
 			Long idCompte = (long) 2;
 			compte.setIdCompte(idCompte);
-			compte.setSolde(1531.25);
-			compte.setPersonne(personne);
 			
 			OperationCompte operationCompte = new OperationCompte();
 			SensComptable credit = SensComptable.C;
@@ -61,7 +62,7 @@ class OperationCompteDaoTest {
 		} catch (Exception e) {
 		} finally {
 			List<OperationCompte> operations = operationCompteRepository.findAll();
-			assertEquals(4, operations.size());
+			assertEquals(5, operations.size());
 		}
 	}
 

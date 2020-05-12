@@ -12,12 +12,13 @@ import com.paymybuddy.paymybuddy.model.PersonneInfo;
 @Service
 public interface MainService {
 	
-	public void enregistrerPersonne(PersonneInfo personneInfo) throws NoResultException;
-	public Personne seConnecter(String email, String motDePasse) throws NoResultException;
-	public void AjouterUnAmisASaListe(String email, String emailami);
+	public void enregistrerPersonne(PersonneInfo personneInfo);
+	public Personne seConnecter(String email, String motDePasse);
+	public void AjouterUnAmisASaListe(String email, String emailAmi);
 	public void verserMontantSurCompte(String email,  Double montant);
 	public Double calculerSoldeCompte(Compte compte,  Double montant, SensComptable sensComptable);
-	
-	//public void virerMontantVersCompteBancaire(String email,  Double montant);
+	public Double calculerMontantCommission(Double montant);
+	public void payerUnAmi(String email, String emailAmi, Double montant);
+	public void virerSurCompteBancaire(String email, Double montant);
 
 }

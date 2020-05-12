@@ -1,8 +1,7 @@
 package com.paymybuddy.paymybuddy.services;
 
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 //import org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
@@ -11,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -27,7 +24,7 @@ import com.paymybuddy.paymybuddy.repository.PersonneRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class MainServiceTest {
 
 	@InjectMocks
@@ -82,7 +79,7 @@ class MainServiceTest {
 		SensComptable credit = SensComptable.C;
 		
 		Double solde = mainServiceImpl.calculerSoldeCompte(compte, montant, credit);
-		assertEquals(300.50,solde);
+		assertTrue(solde == 300.50);
 	}
 	
 	@Test
@@ -99,7 +96,7 @@ class MainServiceTest {
 		SensComptable debit = SensComptable.D;
 		
 		Double solde = mainServiceImpl.calculerSoldeCompte(compte, montant, debit);
-		assertEquals(0.50,solde);
+		assertTrue(solde == 0.50);
 	}
 	
 	@Test
@@ -116,7 +113,13 @@ class MainServiceTest {
 		SensComptable debit = SensComptable.D;
 		
 		Double solde = mainServiceImpl.calculerSoldeCompte(compte, montant, debit);
-		assertEquals(-99.50,solde);
+		assertTrue(solde == -99.50);
 	}
 	
+	@Test
+	void whenCalculateMontantCommission() {
+		Double montant = 100.00;
+		Double montantCommission = mainServiceImpl.calculerMontantCommission(montant);
+		assertTrue(montantCommission == 2.00);
+	}
 }

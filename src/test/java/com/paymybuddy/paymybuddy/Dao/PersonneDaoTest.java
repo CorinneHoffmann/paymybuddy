@@ -7,15 +7,13 @@ import java.util.List;
 import javax.persistence.NoResultException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
+import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-
 
 import com.paymybuddy.paymybuddy.model.Personne;
 import com.paymybuddy.paymybuddy.repository.PersonneRepository;
@@ -23,7 +21,6 @@ import com.paymybuddy.paymybuddy.repository.PersonneRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class PersonneDaoTest {
 
 	@Autowired
@@ -60,7 +57,7 @@ class PersonneDaoTest {
 	void whenFindPersonneByEmailAndPasswordWhichNotExists() throws NoResultException, NotSupportedException, SystemException {
 		assertEquals(null, personneDaoImpl.findByEmailAndPassword("testcorinne93.@gmail.com","coco92"));
 	}	
-
+	@Transactional
 	@Test
 	void whentryInsertPersonne() {
 		try {

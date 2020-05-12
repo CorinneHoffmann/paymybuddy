@@ -25,18 +25,18 @@ OperationCompteRepository operationCompteRepository;
 	private SensComptable sensComptable;
 	private TypeOperation typeOperation;
 	private Double montant;
-	private Personne beneficiaire;
+	private Personne personne;
 	private CompteBancaire compteBancaire;
 	private OperationCompte operationCompte;
 
 	@Override
-	public void enregistrerOperationComptable(Compte compte, SensComptable sensComptable, TypeOperation typeOperation,
-			Double montant, Personne beneficiaire, CompteBancaire compteBancaire) {
+	public OperationCompte creerOperationCompte(Compte compte, SensComptable sensComptable, TypeOperation typeOperation,
+			Double montant, Personne personne, CompteBancaire compteBancaire) {
 		this.compte = compte;
 		this.sensComptable = sensComptable;
 		this.typeOperation = typeOperation;
 		this.montant = montant;
-		this.beneficiaire = beneficiaire;
+		this.personne = personne;
 		this.compteBancaire = compteBancaire;
 		
 		Date dateOperation = new Date();
@@ -47,12 +47,11 @@ OperationCompteRepository operationCompteRepository;
 		operationCompte.setDateOperation(dateOperation);
 		operationCompte.setCompte(compte);
 		operationCompte.setMontant(montant);	
-		operationCompte.setCompteBancaire(null);
-		operationCompte.setPersonne(null);
+		operationCompte.setCompteBancaire(compteBancaire);
+		operationCompte.setPersonne(personne);
 		operationCompteRepository.save(operationCompte);
-		
-		
-		
+		System.out.println("operationCompte Id crée " + operationCompte.getIdOperationCompte());
+		return operationCompte;
 	}
 
 }
