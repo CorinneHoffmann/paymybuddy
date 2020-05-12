@@ -43,7 +43,7 @@ This code uses the default root account to connect and the password can be set a
 
 6. BASE DE DONNEES MPD
 
-![MPD DENORMALISE](/image/MPDdenormalise.png)
+![MPD DENORMALISE](/image/MPDDenormalise.png)
 
 ### Running App
 

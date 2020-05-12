@@ -6,39 +6,40 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.persistence.NoResultException;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.paymybuddy.paymybuddy.Dao.PersonneDaoImpl;
 import com.paymybuddy.paymybuddy.repository.PersonneRepository;
-import com.paymybuddy.paymybuddy.repository.PersonneRepositoryAddMethods;
-import com.paymybuddy.paymybuddy.services.PersonneService;
+import com.paymybuddy.paymybuddy.services.MainService;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class MainControllerTest {
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+class MainControllerIT {
 
 	@Autowired
 	private MockMvc mockmvc;
 
 	@Autowired
-	PersonneService personneService;
+	MainService mainService;
 
 	@Autowired
-	PersonneRepositoryAddMethods personneRepositoryAddMethods;
+	PersonneDaoImpl personneDaoImpl;
 
 	@Autowired
 	PersonneRepository personneRepository;
-
+	
 	@Test
 	void shouldRecordPersonney() throws Exception {
 
@@ -51,6 +52,7 @@ class MainControllerTest {
 		String contentAsString = result.getResponse().getContentAsString();
 		assertEquals("Enregistrement OK", contentAsString);
 	}
+	
 	
 	@Test
 	void shouldConnect() throws Exception {
@@ -65,7 +67,34 @@ class MainControllerTest {
 		String contentAsString = result.getResponse().getContentAsString();
 		assertEquals("Connexion OK", contentAsString);
 	}
+	
+	@Test
+	void shouldAjouterAmi() throws Exception {
 
+		
+		MvcResult result = mockmvc.perform(post("/personneAjouterAmi")
+				.param("email", "testcorinne93.@gmail.com")
+				.param("emailami", "testmathiasdupont.@yahoo.fr")
+				.characterEncoding("utf-8"))
+				.andExpect(status().isOk()).andDo(print()).andReturn();
+		
+		String contentAsString = result.getResponse().getContentAsString();
+		assertEquals("Ajout ami OK", contentAsString);
+	}
+	
+	@Test
+	void shouldCrediterrCompte() throws Exception {
+
+		
+		MvcResult result = mockmvc.perform(post("/crediterCompte")
+				.param("email", "testcorinne93.@gmail.com")
+				.param("montant", "500.00")
+				.characterEncoding("utf-8"))
+				.andExpect(status().isOk()).andDo(print()).andReturn();
+		
+		String contentAsString = result.getResponse().getContentAsString();
+		assertEquals("versement OK", contentAsString);
+	}
 	
 	
 }

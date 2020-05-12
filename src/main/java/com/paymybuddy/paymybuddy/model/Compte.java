@@ -16,7 +16,7 @@ import com.sun.istack.NotNull;
 public class Compte {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idcompte")
 	private Long idCompte;
 

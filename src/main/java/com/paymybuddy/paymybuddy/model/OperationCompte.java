@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,16 +14,18 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import com.paymybuddy.paymybuddy.constants.SensComptable;
+import com.paymybuddy.paymybuddy.constants.TypeOperation;
 import com.sun.istack.NotNull;
 
 @Entity
-@Table(name = "OPERATIONBANCAIRE")
-public class OperationBancaire {
+@Table(name = "OPERATIONCOMPTE")
+public class OperationCompte {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "idoperationbancaire")
-	private Long idOperationBancaire;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "idoperationcompte")
+	private Long idOperationCompte;
 	
 	@OneToOne
 	@JoinColumn(name = "compteid")
@@ -36,14 +40,14 @@ public class OperationBancaire {
 	private Date dateOperation;
 	
 	@NotNull
-    @Size(max = 10)
 	@Column(name = "typeoperation")
-	private String typeOperation;
+	@Enumerated(EnumType.STRING)
+	private TypeOperation typeOperation;
 	
 	@NotNull
-    @Size(max = 1)
 	@Column(name = "debitcredit")
-	private String debitCredit;
+	@Enumerated(EnumType.STRING)
+	private SensComptable debitCredit;
 	
 	@OneToOne
 	@JoinColumn(name = "personneid")
@@ -52,14 +56,21 @@ public class OperationBancaire {
 	@OneToOne
 	@JoinColumn(name = "comptebancaireid")
 	private CompteBancaire compteBancaire;
-	
-	
-	public Long getIdOperationBancaire() {
-		return idOperationBancaire;
+
+	public Long getIdOperationCompte() {
+		return idOperationCompte;
 	}
 
-	public void setIdOperationBancaire(Long idOperationBancaire) {
-		this.idOperationBancaire = idOperationBancaire;
+	public void setIdOperationCompte(Long idOperationCompte) {
+		this.idOperationCompte = idOperationCompte;
+	}
+
+	public Compte getCompte() {
+		return compte;
+	}
+
+	public void setCompte(Compte compte) {
+		this.compte = compte;
 	}
 
 	public Double getMontant() {
@@ -78,19 +89,19 @@ public class OperationBancaire {
 		this.dateOperation = dateOperation;
 	}
 
-	public String getTypeOperation() {
+	public TypeOperation getTypeOperation() {
 		return typeOperation;
 	}
 
-	public void setTypeOperation(String typeOperation) {
+	public void setTypeOperation(TypeOperation typeOperation) {
 		this.typeOperation = typeOperation;
 	}
 
-	public String getDebitCredit() {
+	public SensComptable getDebitCredit() {
 		return debitCredit;
 	}
 
-	public void setDebitCredit(String debitCredit) {
+	public void setDebitCredit(SensComptable debitCredit) {
 		this.debitCredit = debitCredit;
 	}
 
@@ -102,14 +113,6 @@ public class OperationBancaire {
 		this.personne = personne;
 	}
 
-	public Compte getCompte() {
-		return compte;
-	}
-
-	public void setCompte(Compte compte) {
-		this.compte = compte;
-	}
-
 	public CompteBancaire getCompteBancaire() {
 		return compteBancaire;
 	}
@@ -117,6 +120,9 @@ public class OperationBancaire {
 	public void setCompteBancaire(CompteBancaire compteBancaire) {
 		this.compteBancaire = compteBancaire;
 	}
+	
+	
+	
 
 
 }

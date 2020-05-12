@@ -16,7 +16,7 @@ import com.sun.istack.NotNull;
 public class Commission {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idcommission")
 	private Long idCommission;
 	
@@ -31,5 +31,5 @@ public class Commission {
 	@NotNull
 	@OneToOne
 	@JoinColumn(name = "operationbancaireid")
-	private OperationBancaire operationBancaire;
+	private OperationCompte operationBancaire;
 }

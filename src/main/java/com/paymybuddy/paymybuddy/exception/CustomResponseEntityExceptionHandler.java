@@ -45,6 +45,15 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 		ApiResponse apiresponse = new ApiResponse(HttpStatus.NOT_FOUND, e.getMessage());
 		return apiresponse;
 	}
+	
+	@ExceptionHandler(SoldeNegatifException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ApiResponse handleFoundException(SoldeNegatifException e) {
+		logger.error("identifiants not found");
+		ApiResponse apiresponse = new ApiResponse(HttpStatus.NOT_FOUND, e.getMessage());
+		return apiresponse;
+	}
 
 
 	@ExceptionHandler(RuntimeException.class)

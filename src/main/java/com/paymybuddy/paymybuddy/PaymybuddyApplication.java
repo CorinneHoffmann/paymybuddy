@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PaymybuddyApplication {
 
 	public static void main(String[] args) {
-		// PersonneService personneService = new PersonneService();
 
 		SpringApplication.run(PaymybuddyApplication.class, args);
 
 	}
+
 }
