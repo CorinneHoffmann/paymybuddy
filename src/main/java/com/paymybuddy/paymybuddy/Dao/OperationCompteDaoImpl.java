@@ -2,6 +2,8 @@ package com.paymybuddy.paymybuddy.Dao;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +18,8 @@ import com.paymybuddy.paymybuddy.repository.OperationCompteRepository;
 @Repository
 public class OperationCompteDaoImpl implements OperationCompteDao {
 	
-
+	Logger logger = LoggerFactory.getLogger(OperationCompteDaoImpl.class);
+	
 @Autowired
 OperationCompteRepository operationCompteRepository;
 
@@ -50,7 +53,7 @@ OperationCompteRepository operationCompteRepository;
 		operationCompte.setCompteBancaire(compteBancaire);
 		operationCompte.setPersonne(personne);
 		operationCompteRepository.save(operationCompte);
-		System.out.println("operationCompte Id crée " + operationCompte.getIdOperationCompte());
+		logger.info("OperationCompte créée");
 		return operationCompte;
 	}
 

@@ -65,7 +65,7 @@ public class MainController {
 	
 	
 	@PostMapping(value = "/personneAjouterAmi")
-	public  ResponseEntity<String> AjouterUnAmisASaListe(@RequestParam(value = "email", required = false) String email,
+	public  ResponseEntity<String> ajouterUnAmisASaListe(@RequestParam(value = "email", required = false) String email,
 									 @RequestParam(value = "emailami", required = false) String emailAmi) {
 		if (email.isEmpty()) {
 			throw new ControllerException("Vous devez saisir le paramètre email attendu dans l'URL");
@@ -77,7 +77,7 @@ public class MainController {
 			throw new ControllerException("Vous ne pouvez pas etre votre ami modifier un email");
 		}
 		logger.info("DEMANDE_AJOUTER_UN_AMI");
-		mainService.AjouterUnAmisASaListe(email,emailAmi);		
+		mainService.ajouterUnAmisASaListe(email,emailAmi);		
 		return new ResponseEntity("Ajout ami OK",HttpStatus.OK);
 	}
 	

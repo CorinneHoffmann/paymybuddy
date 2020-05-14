@@ -96,8 +96,8 @@ public class MainServiceImpl implements MainService {
 		Double solde = 0.00;
 		compteDaoImpl.creerCompte(personne, solde);
 		
-		logger.info("REPONSE_ENREGISTRER_PERSONNE_PERSONNE_CREEE " + personne.getEmail() + "IdPersonne : " + personne.getIdPersonne());
-		logger.info("REPONSE_ENREGISTRER_PERSONNE_COMPTE_CREE ");
+		logger.info("REPONSE_ENREGISTRER_PERSONNE_CREEE " + personne.getEmail() + "IdPersonne : " + personne.getIdPersonne());
+		logger.info("REPONSE_ENREGISTRER_COMPTE_CREE ");
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class MainServiceImpl implements MainService {
 	 */
 
 	@Override
-	public void AjouterUnAmisASaListe(String email, String emailAmi) {
+	public void ajouterUnAmisASaListe(String email, String emailAmi) {
 		this.email = email;
 		this.emailAmi = emailAmi;
 		boolean findAmiInListe = false;
@@ -240,42 +240,39 @@ public class MainServiceImpl implements MainService {
 		} else {
 			compte = new Compte();
 			compte = compteDaoImpl.findCompteByPersonneId(personne.getIdPersonne());
-			System.out.println("compte a debiter " + compte.getIdCompte() + "solde " + compte.getSolde());
+			logger.info("COMPTE_A_DEBITER " + compte.getIdCompte() + "SOLDE " + compte.getSolde());
 			
 			Double montantCommission = calculerMontantCommission(montant);
-			System.out.println("montant de la commission " + montantCommission);
+			logger.info("MONTANT_COMMISSION " + montantCommission);
 			
 			Double montantTotalDebit = montantCommission + montant;
-			System.out.println("montant total du débit " + montantTotalDebit);
+			logger.info("MONTANT_TOTAL_DEBIT" + montantTotalDebit);
 			
 			SensComptable debit = SensComptable.D;
 			TypeOperation paiement = TypeOperation.PAIEMENT;
 		
 			Double soldeCompte = calculerSoldeCompte(compte,montantTotalDebit,debit);
-			System.out.println("compte a debiter " + compte.getIdCompte() + "nouveau solde si paiement " + soldeCompte);
+			logger.info("COMPTE_A_CREDITER"  + compte.getIdCompte() + "NOUVEAU_SOLDE_SI_PAIEMENT " + soldeCompte);
 		
 			if (soldeCompte >= 0.00)
 				{	
 					operationCompte = new OperationCompte();
 					operationCompte = operationCompteDaoImpl.creerOperationCompte(compte, debit, paiement, montant, ami, null);
-					System.out.println("operation compte créée sur compte " + compte.getIdCompte());
 					commissionDaoImpl.creerCommission(operationCompte, montantCommission,TauxCommission.TAUX1);
-					System.out.println("commission créée " + operationCompte.getIdOperationCompte());
 					compte.setSolde(soldeCompte);		
 					compteRepository.save(compte);	
-					System.out.println("compte debité mis à jour " + compte.getIdCompte());
 		
 					compteAmi = new Compte();
 					compteAmi = compteDaoImpl.findCompteByPersonneId(ami.getIdPersonne());
-					System.out.println("compte a crediter " + compteAmi.getIdCompte() + "solde " + compteAmi.getSolde());
+
 					SensComptable credit = SensComptable.C;		
 					soldeCompte = calculerSoldeCompte(compteAmi,montant,credit);
-					System.out.println("compte a crediter " + compteAmi.getIdCompte() + "nouveau solde si paiement " + soldeCompte);
+				
 					operationCompteDaoImpl.creerOperationCompte(compteAmi, credit, paiement, montant, personne, null);
-					System.out.println("operation compte créée sur compte " + compteAmi.getIdCompte());
+					
 					compteAmi.setSolde(soldeCompte);		
 					compteRepository.save(compteAmi);	
-					System.out.println("compte credite mis à jour " + compteAmi.getIdCompte());
+					
 					logger.info("REPONSE_COMPTE " + email + "DEBITER DE " +montant);
 					logger.info("REPONSE_COMPTE " + emailAmi + "CREDITER DE " +montant);
 				} else {
@@ -356,7 +353,6 @@ public class MainServiceImpl implements MainService {
 		Double montantCommission = 0.00;
 		Double tauxCommission = TauxCommission.TAUX1;
 		montantCommission = montant*tauxCommission/100;
-		System.out.println("montant commission calculé " +montantCommission);
 		return montantCommission;
 	}
 

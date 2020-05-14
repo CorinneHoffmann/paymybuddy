@@ -69,8 +69,7 @@ class MainServiceTest {
 	void whenCalculateSoldeCredit() {
 		Personne personne = new Personne();
 		personne.setIdPersonne((long) 1);
-		//personne.setEmail("testmathiasdupont.@yahoo.fr");
-		//personne.setMotDePasse("testmathias123");
+	
 		Compte compte = new Compte();
 		compte.setIdCompte((long) 1);
 		compte.setSolde(100.50);
@@ -86,8 +85,6 @@ class MainServiceTest {
 	void whenCalculateSoldeDebitPositif() {
 		Personne personne = new Personne();
 		personne.setIdPersonne((long) 1);
-		//personne.setEmail("testmathiasdupont.@yahoo.fr");
-		//personne.setMotDePasse("testmathias123");
 		Compte compte = new Compte();
 		compte.setIdCompte((long) 1);
 		compte.setSolde(100.50);
@@ -103,8 +100,7 @@ class MainServiceTest {
 	void whenCalculateSoldeDebitNegatif() {
 		Personne personne = new Personne();
 		personne.setIdPersonne((long) 1);
-		//personne.setEmail("testmathiasdupont.@yahoo.fr");
-		//personne.setMotDePasse("testmathias123");
+		
 		Compte compte = new Compte();
 		compte.setIdCompte((long) 1);
 		compte.setSolde(100.50);
@@ -120,6 +116,6 @@ class MainServiceTest {
 	void whenCalculateMontantCommission() {
 		Double montant = 100.00;
 		Double montantCommission = mainServiceImpl.calculerMontantCommission(montant);
-		assertTrue(montantCommission == 2.00);
+		assertTrue(montantCommission == 0.50);
 	}
 }

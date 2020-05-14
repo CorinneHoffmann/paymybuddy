@@ -24,7 +24,6 @@ import com.paymybuddy.paymybuddy.repository.CompteRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-//@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class CompteDaoTest {
 
 	
@@ -40,7 +39,6 @@ class CompteDaoTest {
 		Compte compte = new Compte();
 		Long personneId = (long) 2;			
 		compte = compteDaoImpl.findCompteByPersonneId(personneId);
-		System.out.println("compte " + compte.getSolde());
 		assertTrue(compte.getSolde()==1531.25);		
 	}
 	

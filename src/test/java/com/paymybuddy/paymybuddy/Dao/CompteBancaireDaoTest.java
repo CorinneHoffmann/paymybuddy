@@ -22,7 +22,6 @@ import com.paymybuddy.paymybuddy.repository.CompteRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-//@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class CompteBancaireDaoTest {
 
 
@@ -38,7 +37,6 @@ class CompteBancaireDaoTest {
 		CompteBancaire compteBancaire = new CompteBancaire();
 		Long personneId = (long) 2;			
 		compteBancaire = compteBancaireDaoImpl.findCompteBancaireByPersonneId(personneId);
-		System.out.println("compte " + compteBancaire.getIban());
 		assertEquals("FR02 1860 17D1 12KL FGHJ 17", compteBancaire.getIban());		
 	}
 	

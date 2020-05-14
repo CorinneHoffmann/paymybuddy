@@ -26,7 +26,6 @@ import com.paymybuddy.paymybuddy.repository.OperationCompteRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-//@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class OperationCompteDaoTest {
 
 	@Autowired

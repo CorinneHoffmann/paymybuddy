@@ -35,7 +35,6 @@ class PersonneDaoTest {
 		
 		Personne personne = new Personne();
 		personne = personneDaoImpl.findByEmail("testcorinne93.@gmail.com");
-		System.out.println(personne.getNom());
 		assertEquals("testalicantour", personne.getNom());
 		
 	}
@@ -49,14 +48,14 @@ class PersonneDaoTest {
 	void whenFindPersonneByEmailAndPasswordWhichExists() throws NoResultException, NotSupportedException, SystemException  {
 		Personne personne = new Personne();
 		personne = personneDaoImpl.findByEmailAndPassword("testcorinne93.@gmail.com","testcoco93");
-		System.out.println(personne.getNom());
 		assertEquals("testalicantour", personne.getNom());
 	}
 	
 	@Test
 	void whenFindPersonneByEmailAndPasswordWhichNotExists() throws NoResultException, NotSupportedException, SystemException {
 		assertEquals(null, personneDaoImpl.findByEmailAndPassword("testcorinne93.@gmail.com","coco92"));
-	}	
+	}
+	
 	@Transactional
 	@Test
 	void whentryInsertPersonne() {

@@ -17,7 +17,7 @@ import com.paymybuddy.paymybuddy.repository.CompteRepository;
 public class CompteBancaireDaoImpl implements CompteBancaireDao {
 
 	
-	Logger logger = LoggerFactory.getLogger(PersonneDaoImpl.class);
+	Logger logger = LoggerFactory.getLogger(CompteBancaireDaoImpl.class);
 
 	@Autowired
 	private EntityManager entityManager;
@@ -42,6 +42,7 @@ public class CompteBancaireDaoImpl implements CompteBancaireDao {
 			logger.info("idCompteBancaire non trouve", e);
 			return null;
 		}
+
 		return compteBancaire;	
 	}
 

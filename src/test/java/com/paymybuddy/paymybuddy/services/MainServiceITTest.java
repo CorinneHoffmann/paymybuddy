@@ -75,7 +75,7 @@ class MainServiceITTest {
 	void AjouterAmiTest() {
 		String email = "testcorinne93.@gmail.com";
 		String emailami = "testmathiasdupont.@yahoo.fr";
-		mainServiceImpl.AjouterUnAmisASaListe(email, emailami);
+		mainServiceImpl.ajouterUnAmisASaListe(email, emailami);
 		Personne personne = personneDaoImpl.findByEmail("testcorinne93.@gmail.com");
 		assertEquals(2, personne.getAmis().size());
 	}
@@ -99,8 +99,7 @@ class MainServiceITTest {
 		Double montant = 12.00;
 		mainServiceImpl.payerUnAmi(email, emailAmi, montant);
 		Compte compte = compteDaoImpl.findCompteByPersonneId(2);
-		System.out.println("montant compte " + compte.getSolde());
-		assertTrue(compte.getSolde() == 1519.01);
+		assertTrue(compte.getSolde() == 1519.19);
 	}
 	
 	@Transactional
@@ -110,7 +109,6 @@ class MainServiceITTest {
 		Double montant = 100.00;
 		mainServiceImpl.virerSurCompteBancaire(email, montant);
 		Compte compte = compteDaoImpl.findCompteByPersonneId(2);
-		System.out.println("montant compte " + compte.getSolde());
 		assertTrue(compte.getSolde() == 1431.25);
 	}
 	

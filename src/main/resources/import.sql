@@ -39,5 +39,5 @@ insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typ
 insert into operationcompte(idoperationcompte,compteid,montant,dateoperation,typeoperation,debitcredit,personneid,comptebancaireid)values(4,3,500,'2020-02-15','VERSEMENT','C',NULL,NULL);
 
 -- chargement commission
-insert into commission(idcommission,taux,montant,operationcompteid)values(1,2.00,2.01,1);
+insert into commission(idcommission,taux,montant,operationcompteid)values(1,0.50,0.51,1);
 

@@ -81,12 +81,29 @@ public class OperationCompte {
 		this.montant = montant;
 	}
 
+	/*
 	public Date getDateOperation() {
 		return dateOperation;
 	}
 
 	public void setDateOperation(Date dateOperation) {
 		this.dateOperation = dateOperation;
+	}*/
+	
+	public Date getDateOperation() {
+		if (dateOperation == null) {
+			return null;
+		} else {
+			return new Date(dateOperation.getTime());
+		}
+	}
+	
+	public void setDateOperation(Date dateOperation) {
+		if (dateOperation == null)
+			this.dateOperation = null;
+		else
+		this.dateOperation = new Date(dateOperation.getTime());
+	
 	}
 
 	public TypeOperation getTypeOperation() {

@@ -15,7 +15,7 @@ import com.paymybuddy.paymybuddy.repository.CompteRepository;
 @Repository
 public class CompteDaoImpl implements CompteDao {
 	
-	Logger logger = LoggerFactory.getLogger(PersonneDaoImpl.class);
+	Logger logger = LoggerFactory.getLogger(CompteDaoImpl.class);
 
 	@Autowired
 	private EntityManager entityManager;
@@ -55,6 +55,7 @@ public class CompteDaoImpl implements CompteDao {
 		compte.setSolde(0.00);
 		compte.setPersonne(personne);
 		compteRepository.save(compte);
+		logger.info("Compte crée");
 		
 	}
 

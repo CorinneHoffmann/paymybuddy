@@ -124,7 +124,7 @@ class MainControllerITTest {
 		MvcResult result = mockmvc.perform(post("/payerAmi")
 				.param("email", "testcorinne93.@gmail.com")
 				.param("emailami", "testtitidavant.@gmail.com")
-				.param("montant", "1520.00")
+				.param("montant", "1525.00")
 				.characterEncoding("utf-8"))
 				.andExpect(status().isUnauthorized()).andDo(print()).andReturn();
 		

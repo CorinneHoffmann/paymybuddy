@@ -1,5 +1,7 @@
 package com.paymybuddy.paymybuddy.Dao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +12,7 @@ import com.paymybuddy.paymybuddy.repository.CommissionRepository;
 @Repository
 public class CommissionDaoImpl implements CommissionDao {
 
+	Logger logger = LoggerFactory.getLogger(CommissionDaoImpl.class);
 	
 	@Autowired
 	CommissionRepository commissionRepository;
@@ -17,6 +20,7 @@ public class CommissionDaoImpl implements CommissionDao {
 	private Double montant;
 	private Double taux;
 	Commission commission;
+	
 
 	@Override
 	public void creerCommission(OperationCompte operationCompte, Double montant, Double taux) {
@@ -30,6 +34,7 @@ public class CommissionDaoImpl implements CommissionDao {
 		commission.setTaux(taux);
 		commission.setOperationCompte(operationCompte);
 		commissionRepository.save(commission);
+		logger.info("Commission créée");
 		
 	}
 

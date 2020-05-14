@@ -24,7 +24,6 @@ import com.paymybuddy.paymybuddy.repository.CommissionRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration
-//@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class CommissionDaoTest {
 
 	@Autowired
